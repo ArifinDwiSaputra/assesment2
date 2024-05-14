@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data User</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+
+      h2 {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 80%;
+        margin: 20px auto;
+        background-color: #fff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      .hapus-btn {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .hapus-btn:hover {
+        background-color: #d32f2f;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Data User</h2>
+
+    <table id="data-table">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Password</th>
+          <th>Email</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $.ajax({
+          url: "getuser.php",
+          type: "GET",
+          dataType: "json",
+          success: function (data) {
+            console.log(data);
+            var table = $("#data-table tbody");
+            $.each(data, function (index, item) {
+              table.append(
+                "<tr><td>" +
+                  item.nama_user +
+                  "</td><td>" +
+                  item.password_user +
+                  "</td><>" +
+                  item.email +
+                  "</td><td>" +
+                  item.email +
+                  "</td>" +
+                  '<td><button class="hapus-btn" data-id="' +
+                  item.id_user +
+                  '">Hapus</button></td></tr>'
+              );
+            });
+          },
+          error: function (xhr, status, error) {
+            console.error(xhr.responseText);
+          },
+        });
+
+        $("#data-table").on("click", ".hapus-btn", function () {
+          var id = $(this).data("id");
+          var row = $(this).closest("tr");
+          $.ajax({
+            url: "deleteuser.php",
+            type: "POST",
+            data: { id: id },
+            success: function (response) {
+              row.remove();
+              console.log("Data berhasil dihapus");
+            },
+            error: function (xhr, status, error) {
+              console.error(xhr.responseText);
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
